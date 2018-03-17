@@ -1,27 +1,19 @@
 #!/usr/bin/env python2
 # -*- coding: utf-8 -*-
-"""
-Created on Wed Mar 14 13:48:53 2018
 
-@author: kaka
-"""
-
-import numpy as np
 import cv2
-import matplotlib.pyplot as plt
 import os
+import sys
 
-videoName = 'Mug4.webm'
-cap = cv2.VideoCapture(videoName)
-if not cap.isOpened():
-    print "Video not found or Opencv without ffmpeg"
-amount_of_frames = cap.get(cv2.CAP_PROP_FRAME_COUNT)
-actual = cap.get(cv2.CAP_PROP_POS_FRAMES)
+if len(sys.argv) == 2:
+    videoName = sys.argv[1]
+else:
+    videoName = 'Mug4.webm'
+
 foldName = videoName.split('.')[0]
 foldLabel = foldName+'/labels'
 foldJpeg = foldName+'/JPEGImages'
 foldGT = foldName+'/Ground'
-
 if not os.path.exists(foldName):
     os.mkdir(foldName)
 if not os.path.exists(foldLabel):
@@ -30,13 +22,11 @@ if not os.path.exists(foldJpeg):
     os.mkdir(foldJpeg)
 if not os.path.exists(foldGT):
     os.mkdir(foldGT)
-    
-    
+          
 drawRect = False
 startRect = (-1, -1)
 endRect = (-1, -1)
 key = -1
-
 color = [(255,0,0),(0,255,0),(0,0,255),(255,255,0),(255,0,255),(0,255,255),(0,0,0),(255,255,255)]
 
 def draw(event,x,y,flags,param):
@@ -73,15 +63,17 @@ cv2.setMouseCallback("VideoTag", draw)
 cv2.createTrackbar("ID", "VideoTag",0, 7, nothing)
 cv2.createTrackbar("Jump", "VideoTag",1, 10, nothing)
 cv2.createTrackbar("SkipFrames", "VideoTag",1, 300, nothing)
-        
+
+cap = cv2.VideoCapture(videoName)
+if not cap.isOpened():
+    print "Video not found or Opencv without ffmpeg"        
 framePos = 0
 ret, Oriframe = cap.read()     
+
 frame = Oriframe.copy()
 height, width, _ = frame.shape
 
-
-
-while(cap.isOpened() and type(Oriframe) is not type(None) ):
+while(cap.isOpened() and ret ):
 
     frame = Oriframe.copy()
     iClass = cv2.getTrackbarPos('ID','VideoTag')
@@ -93,7 +85,6 @@ while(cap.isOpened() and type(Oriframe) is not type(None) ):
     key = cv2.waitKey(1) & 0xFF
     if key == ord('q'):
         break
-    
     if key == ord('w'):
         startRect = (startRect[0], startRect[1]-Jump)
         endRect = (endRect[0], endRect[1]-Jump)
@@ -106,7 +97,6 @@ while(cap.isOpened() and type(Oriframe) is not type(None) ):
     if key == ord('d'):
         startRect = (startRect[0]+Jump, startRect[1])
         endRect = (endRect[0]+Jump, endRect[1])
-    
     if key == ord('6'):
         startRect = (startRect[0]-Jump, startRect[1])
         endRect = (endRect[0]+Jump, endRect[1])
@@ -152,7 +142,6 @@ while(cap.isOpened() and type(Oriframe) is not type(None) ):
 command = 'ls -d '+os.getcwd()+'/{}/JPEGImages/* > '.format(foldName)+os.getcwd()+'/{}/imgList.txt'.format(foldName)
 os.system(command)
 
-    
 cap.release()
 cv2.destroyAllWindows()
 
