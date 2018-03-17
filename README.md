@@ -42,7 +42,10 @@ Givem a video file, it will create:
     ├── JPEGImages (Fold with the imagens, without Bound Box)
     ├── labels (Fold with the txt labels files in yolo-voc format)
  	└──	imgList.txt (List with full directory of all JPEGImages)
+"""
+Created on Wed Mar 14 13:48:53 2018
 
+@author: kaka
 ```
 
 ### Label Format
@@ -56,3 +59,17 @@ Givem a video file, it will create:
 	1. Organize the code
 	2. Add suport for multi bound box in the same image
 	3. Make automatic Bound Box
+
+### Please Feel Free to Contact Us!
+
+**Carlos Pena** ([GitHub :octocat:](https://github.com/CarlosPena00))
+  
+![](https://github.com/CarlosPena00.png?size=230)  
+**chcp@cin.ufpe.br**
+
+**Heitor Rapela** ([GitHub :octocat:](https://github.com/heitorrapela))
+  
+![](https://github.com/heitorrapela.png?size=230)  
+**hrm@cin.ufpe.br**
+
+
