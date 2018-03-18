@@ -50,9 +50,20 @@ Created on Wed Mar 14 13:48:53 2018
 
 ### Label Format
 
-     ID; 
-     absoluteX/imgWidth; absoluteY/imgHeight;
-     absoluteWidth/imgWidth; absoluteHeight/imgHeigh  
+    (ID) (absoluteX/imgWidth) (absoluteY/imgHeight) (absoluteWidth/imgWidth) (absoluteHeight/imgHeight)
+
+    Example: 
+	  Class Id = 0 
+	  absoluteX = 50  (X of the center of the BoundBox)
+	  absoluteY = 50  (Y of the center of the BoundBox)
+	  absoluteWidth = 100 (Width of the BoundBox)
+	  absoluteHeight = 100 (Height of the BoundBox)
+	  imgWidth = 400  (Image width)
+	  imgHeight = 400 (Image Height)
+
+	         0 50/400 50/400 100/400 100/400
+	  Label: 0 0.125  0.125   0.25    0.25
+	
 
 ### TODO
 	
