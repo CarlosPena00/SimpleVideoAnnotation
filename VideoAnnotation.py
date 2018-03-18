@@ -14,6 +14,7 @@ foldName = videoName.split('.')[0]
 foldLabel = foldName+'/labels'
 foldJpeg = foldName+'/JPEGImages'
 foldGT = foldName+'/Ground'
+
 if not os.path.exists(foldName):
     os.mkdir(foldName)
 if not os.path.exists(foldLabel):
@@ -34,7 +35,7 @@ def draw(event,x,y,flags,param):
     global startRect
     global frame
     global endRect
-    global Oriframe
+    global oriFrame
     global key
     global color
     
@@ -47,11 +48,11 @@ def draw(event,x,y,flags,param):
     elif event == cv2.EVENT_MOUSEMOVE:
         if drawRect:
             endRect = (x, y)
-            frame = Oriframe.copy()
+            frame = oriFrame.copy()
             iClass = cv2.getTrackbarPos('ID','VideoTag')
             cv2.rectangle(frame, startRect, endRect, color[iClass])
     elif event == cv2.EVENT_RBUTTONDOWN:
-        frame = Oriframe.copy()
+        frame = oriFrame.copy()
         startRect = (-1, -1)
         endRect = (-1, -1)
 
@@ -66,51 +67,51 @@ cv2.createTrackbar("SkipFrames", "VideoTag",1, 300, nothing)
 
 cap = cv2.VideoCapture(videoName)
 if not cap.isOpened():
-    print "Video not found or Opencv without ffmpeg"        
+    print ("Video not found or Opencv without ffmpeg")      
 framePos = 0
-ret, Oriframe = cap.read()     
+ret, oriFrame = cap.read()     
 
-frame = Oriframe.copy()
+frame = oriFrame.copy()
 height, width, _ = frame.shape
 
 while(cap.isOpened() and ret ):
 
-    frame = Oriframe.copy()
+    frame = oriFrame.copy()
     iClass = cv2.getTrackbarPos('ID','VideoTag')
-    Jump = cv2.getTrackbarPos('Jump','VideoTag')
+    jump = cv2.getTrackbarPos('Jump','VideoTag')
     
     cv2.rectangle(frame, startRect, endRect, color[iClass], 2)
     cv2.imshow("VideoTag", frame)
 
-    key = cv2.waitKey(1) & 0xFF
+    key = (cv2.waitKey(1) & 0xFF)
     if key == ord('q'):
         break
     if key == ord('w'):
-        startRect = (startRect[0], startRect[1]-Jump)
-        endRect = (endRect[0], endRect[1]-Jump)
+        startRect = (startRect[0], startRect[1]-jump)
+        endRect = (endRect[0], endRect[1]-jump)
     if key == ord('s'):
-        startRect = (startRect[0], startRect[1]+Jump)
-        endRect = (endRect[0], endRect[1]+Jump)
+        startRect = (startRect[0], startRect[1]+jump)
+        endRect = (endRect[0], endRect[1]+jump)
     if key == ord('a'):
-        startRect = (startRect[0]-Jump, startRect[1])
-        endRect = (endRect[0]-Jump, endRect[1])
+        startRect = (startRect[0]-jump, startRect[1])
+        endRect = (endRect[0]-jump, endRect[1])
     if key == ord('d'):
-        startRect = (startRect[0]+Jump, startRect[1])
-        endRect = (endRect[0]+Jump, endRect[1])
+        startRect = (startRect[0]+jump, startRect[1])
+        endRect = (endRect[0]+jump, endRect[1])
     if key == ord('6'):
-        startRect = (startRect[0]-Jump, startRect[1])
-        endRect = (endRect[0]+Jump, endRect[1])
+        startRect = (startRect[0]-jump, startRect[1])
+        endRect = (endRect[0]+jump, endRect[1])
     if key == ord('4'):
-        startRect = (startRect[0]+Jump, startRect[1])
-        endRect = (endRect[0]-Jump, endRect[1])
+        startRect = (startRect[0]+jump, startRect[1])
+        endRect = (endRect[0]-jump, endRect[1])
     if key == ord('8'):
-        startRect = (startRect[0], startRect[1]-Jump)
-        endRect = (endRect[0], endRect[1]+Jump)
-    if key == ord('5'):
-        startRect = (startRect[0], startRect[1]+Jump)
-        endRect = (endRect[0], endRect[1]-Jump)
-    if key == 32:
-        frameWid, frameHei = abs(startRect[0]-endRect[0]), abs(startRect[1]-endRect[1])
+        startRect = (startRect[0], startRect[1]-jump)
+        endRect = (endRect[0], endRect[1]+jump)
+    if key == ord('2'):
+        startRect = (startRect[0], startRect[1]+jump)
+        endRect = (endRect[0], endRect[1]-jump)
+    if key == (32):
+        frameWidth, frameHeight = abs(startRect[0]-endRect[0]), abs(startRect[1]-endRect[1])
         xCenter, yCenter = abs((startRect[0]+endRect[0])/2.0), abs((startRect[1]+endRect[1])/2.0)
         xVoc, yVoc = xCenter/width, yCenter/height
         
@@ -118,21 +119,21 @@ while(cap.isOpened() and ret ):
         skip = cv2.getTrackbarPos('SkipFrames','VideoTag')
         cap.set(cv2.CAP_PROP_POS_FRAMES,actual+skip)
         
-        if frameWid < 2 or frameHei <2:
-            ret, Oriframe = cap.read()  
+        if frameWidth < 2 or frameHeight <2:
+            ret, oriFrame = cap.read()  
             continue
-        
-        widVoc = float(frameWid)/width
-        heiVoc = float(frameHei)/height
+    
+        widthVoc = float(frameWidth)/width
+        heightVoc = float(frameHeight)/height
         iClass = cv2.getTrackbarPos('ID','VideoTag')
-        vocClass = (iClass, xVoc,yVoc, widVoc, heiVoc, '\n')
+        vocClass = (iClass, xVoc,yVoc,  widthVoc, heightVoc, '\n')
         vocLabel = ' '.join(str(e) + ' ' for e in vocClass)
         fileName = "/{:06d}.jpg".format(framePos)
         cv2.imwrite(foldGT+fileName, frame)
         fileName = "/{:06d}.jpg".format(framePos)
-        cv2.imwrite(foldJpeg+fileName, Oriframe)
+        cv2.imwrite(foldJpeg+fileName, oriFrame)
                 
-        ret, Oriframe = cap.read()  
+        ret, oriFrame = cap.read()  
         
         with open(foldLabel+"/{:06d}.txt".format(framePos), 'w') as f:
             f.write(vocLabel)
