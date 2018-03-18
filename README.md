@@ -1,51 +1,47 @@
-# SimpleVideoAnnotation
+# Simple Video Annotation
 
-> A simple Video annotation made with python + opencv for detection in yolo-voc format
+> A simple Video annotation made with python + opencv for detection in yolo format
 
 ![](VideoTag.png)
 
 ## Installation
 
 ```sh
-	#TODO
-	You will need OpenCV with ffmpeg lib
+#TODO
+You will need OpenCV with ffmpeg lib
 ```
 
 ## Usage example
 
 ```sh
-	python VideoAnnotation.py
+python VideoAnnotation.py
 ```
 
 ## Controls:
 
-* q - quit
-* Mouse Left - Create New Bound Box, drag to change the dim
-* Mouse right - Erase actual Bounding Box
-* WASD - move the Bound Box
-* 8456 - Change width height
-* Space - next frame
+* q - Quit
+* Mouse Left - Create new BoundBox, drag to change the dimension
+* Mouse Right - Erase actual BoundingBox
+* WASD - Move the BoundBox
+* 8456 - Change width and height
+* Space - Next frame
 
 ## Variables -- Trackbar
 
-* ID - Id of the label 
+* ID - Id of the label
 * Jump - How many pixels WASD/8456 will change
-* Skip - How many frames will be skiped
+* Skip - How many frames will be skipped
 
 ## Tree
 Givem a video file, it will create:
 
 ```
 .
-└── VideoFolder (the same name of the video file)
-    ├── Ground  (Fold with ground imagens, with Bound Box)
-    ├── JPEGImages (Fold with the imagens, without Bound Box)
-    ├── labels (Fold with the txt labels files in yolo-voc format)
- 	└──	imgList.txt (List with full directory of all JPEGImages)
-"""
-Created on Wed Mar 14 13:48:53 2018
-
-@author: kaka
+└── VideoFolder (The same name of the video file)
+    ├── Ground  (Fold of ground imagens with BoundBox)
+    ├── JPEGImages (Fold of imagens without BoundBox)
+    ├── labels (Fold with the .txt labels files in yolo format)
+ 	└──	imgList.txt (List with full directory of images inside JPEGImages folder)
 ```
 
 ### Label Format
@@ -53,7 +49,7 @@ Created on Wed Mar 14 13:48:53 2018
     (ID) (absoluteX/imgWidth) (absoluteY/imgHeight) (absoluteWidth/imgWidth) (absoluteHeight/imgHeight)
 
     Example: 
-	  Class Id = 0 
+	  Class Id = 0
 	  absoluteX = 50  (X of the center of the BoundBox)
 	  absoluteY = 50  (Y of the center of the BoundBox)
 	  absoluteWidth = 100 (Width of the BoundBox)
@@ -68,8 +64,8 @@ Created on Wed Mar 14 13:48:53 2018
 ### TODO
 	
 	1. Organize the code
-	2. Add suport for multi bound box in the same image
-	3. Make automatic Bound Box
+	2. Add suport for multi BoundBox in the same image
+	3. Make automatic BoundBox
 
 ### Please Feel Free to Contact Us!
 
