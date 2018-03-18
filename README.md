@@ -14,7 +14,7 @@ You will need OpenCV with ffmpeg lib
 ## Usage example
 
 ```sh
-python VideoAnnotation.py
+python VideoAnnotation.py video.mp4
 ```
 
 ## Controls:

@@ -8,6 +8,8 @@ import sys
 if len(sys.argv) == 2:
     videoName = sys.argv[1]
 else:
+    print ("Video path not provided, using default")
+    print ("Example: python VideoAnnotation.py video.mp4")
     videoName = 'Mug4.webm'
 
 foldName = videoName.split('.')[0]
