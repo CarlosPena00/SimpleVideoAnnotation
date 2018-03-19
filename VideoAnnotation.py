@@ -68,8 +68,10 @@ def draw(event,x,y,flags,param):
                 cv2.rectangle(frame, startRect[values], endRect[values], color[iClass])
     elif event == cv2.EVENT_RBUTTONDOWN:
         frame = oriFrame.copy()
-        startRect.pop()
-        endRect.pop()
+        if len(startRect) > 0:
+            startRect.pop()
+        if len(endRect) > 0:
+            endRect.pop()
         if actual > 0:
             actual -= 1
 
@@ -97,39 +99,40 @@ while(cap.isOpened() and ret ):
     iClass = cv2.getTrackbarPos('ID','VideoTag')
     jump = cv2.getTrackbarPos('Jump','VideoTag')
     
-    
     for values in range(0,len(startRect)):
         cv2.rectangle(frame, startRect[values], endRect[values], color[iClass],2)
 
     cv2.imshow("VideoTag", frame)
 
     key = (cv2.waitKey(1) & 0xFF)
+    
     if key == ord('q'):
         break
-    if key == ord('w'):
-        startRect[actual-1] = (startRect[actual-1][0], startRect[actual-1][1]-jump)
-        endRect[actual-1] = (endRect[actual-1][0], endRect[actual-1][1]-jump)
-    if key == ord('s'):
-        startRect[actual-1] = (startRect[actual-1][0], startRect[actual-1][1]+jump)
-        endRect[actual-1] = (endRect[actual-1][0], endRect[actual-1][1]+jump)
-    if key == ord('a'):
-        startRect[actual-1] = (startRect[actual-1][0]-jump, startRect[actual-1][1])
-        endRect[actual-1] = (endRect[actual-1][0]-jump, endRect[actual-1][1])
-    if key == ord('d'):
-        startRect[actual-1] = (startRect[actual-1][0]+jump, startRect[actual-1][1])
-        endRect[actual-1] = (endRect[actual-1][0]+jump, endRect[actual-1][1])
-    if key == ord('6'):
-        startRect[actual-1] = (startRect[actual-1][0]-jump, startRect[actual-1][1])
-        endRect[actual-1] = (endRect[actual-1][0]+jump, endRect[actual-1][1])
-    if key == ord('4'):
-        startRect[actual-1] = (startRect[actual-1][0]+jump, startRect[actual-1][1])
-        endRect[actual-1] = (endRect[actual-1][0]-jump, endRect[actual-1][1])
-    if key == ord('8'):
-        startRect[actual-1] = (startRect[actual-1][0], startRect[actual-1][1]-jump)
-        endRect[actual-1] = (endRect[actual-1][0], endRect[actual-1][1]+jump)
-    if key == ord('2'):
-        startRect[actual-1] = (startRect[actual-1][0], startRect[actual-1][1]+jump)
-        endRect[actual-1] = (endRect[actual-1][0], endRect[actual-1][1]-jump)
+    if actual > 0 :
+        if key == ord('w'):
+            startRect[actual-1] = (startRect[actual-1][0], startRect[actual-1][1]-jump)
+            endRect[actual-1] = (endRect[actual-1][0], endRect[actual-1][1]-jump)
+        if key == ord('s'):
+            startRect[actual-1] = (startRect[actual-1][0], startRect[actual-1][1]+jump)
+            endRect[actual-1] = (endRect[actual-1][0], endRect[actual-1][1]+jump)
+        if key == ord('a'):
+            startRect[actual-1] = (startRect[actual-1][0]-jump, startRect[actual-1][1])
+            endRect[actual-1] = (endRect[actual-1][0]-jump, endRect[actual-1][1])
+        if key == ord('d'):
+            startRect[actual-1] = (startRect[actual-1][0]+jump, startRect[actual-1][1])
+            endRect[actual-1] = (endRect[actual-1][0]+jump, endRect[actual-1][1])
+        if key == ord('6'):
+            startRect[actual-1] = (startRect[actual-1][0]-jump, startRect[actual-1][1])
+            endRect[actual-1] = (endRect[actual-1][0]+jump, endRect[actual-1][1])
+        if key == ord('4'):
+            startRect[actual-1] = (startRect[actual-1][0]+jump, startRect[actual-1][1])
+            endRect[actual-1] = (endRect[actual-1][0]-jump, endRect[actual-1][1])
+        if key == ord('8'):
+            startRect[actual-1] = (startRect[actual-1][0], startRect[actual-1][1]-jump)
+            endRect[actual-1] = (endRect[actual-1][0], endRect[actual-1][1]+jump)
+        if key == ord('2'):
+            startRect[actual-1] = (startRect[actual-1][0], startRect[actual-1][1]+jump)
+            endRect[actual-1] = (endRect[actual-1][0], endRect[actual-1][1]-jump)
     if key == (32):
         vocLabel = []
         for values in range(0,len(startRect)):
