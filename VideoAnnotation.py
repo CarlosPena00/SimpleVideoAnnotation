@@ -14,7 +14,7 @@ if len(sys.argv) == 2:
     videoName = sys.argv[1]
 else:
     print ("Example of usage: python VideoAnnotation.py video.mp4")
-    videoName = 'Mug4.webm'
+    videoName = 'test.webm'
     
     if os.path.exists(videoName):
         print ("Video path not provided, using default")
@@ -68,8 +68,10 @@ def draw(event,x,y,flags,param):
                 cv2.rectangle(frame, startRect[values], endRect[values], color[iClass])
     elif event == cv2.EVENT_RBUTTONDOWN:
         frame = oriFrame.copy()
-        startRect[actual-1] = (-1, -1)
-        endRect[actual-1] = (-1, -1)
+        startRect.pop()
+        endRect.pop()
+        if actual > 0:
+            actual -= 1
 
 def nothing(x):
     pass
@@ -94,6 +96,7 @@ while(cap.isOpened() and ret ):
     frame = oriFrame.copy()
     iClass = cv2.getTrackbarPos('ID','VideoTag')
     jump = cv2.getTrackbarPos('Jump','VideoTag')
+    
     
     for values in range(0,len(startRect)):
         cv2.rectangle(frame, startRect[values], endRect[values], color[iClass],2)
@@ -134,9 +137,9 @@ while(cap.isOpened() and ret ):
             xCenter, yCenter = abs((startRect[values-1][0]+endRect[values-1][0])/2.0), abs((startRect[values-1][1]+endRect[values-1][1])/2.0)
             xVoc, yVoc = xCenter/width, yCenter/height
             
-            actual = cap.get(flagCapturePosFrame)
+            actualPosFrame = cap.get(flagCapturePosFrame)
             skip = cv2.getTrackbarPos('SkipFrames','VideoTag')
-            cap.set(flagCapturePosFrame,actual+skip)
+            cap.set(flagCapturePosFrame,actualPosFrame+skip)
             
             if frameWidth < 2 or frameHeight < 2:
                 ret, oriFrame = cap.read()  
