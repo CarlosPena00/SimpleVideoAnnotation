@@ -5,7 +5,6 @@ import os
 import sys
 
 cv2v = cv2.__version__
-#cv2v = '2'
 if(cv2v[0] >= '3'):
     flagCapturePosFrame = cv2.CAP_PROP_POS_FRAMES
 elif(cv2v[0] == '2'):
@@ -15,9 +14,13 @@ elif(cv2v[0] == '2'):
 if len(sys.argv) == 2:
     videoName = sys.argv[1]
 else:
-    print ("Video path not provided, using default")
-    print ("Example: python VideoAnnotation.py video.mp4")
+    print ("Example of usage: python VideoAnnotation.py video.mp4")
     videoName = 'Mug4.webm'
+    
+    if os.path.exists(videoName):
+        print ("Video path not provided, using default")
+    else:
+        sys.exit("Error: Video path not provided and default doesnt exist")
 
 foldName = videoName.split('.')[0]
 foldLabel = foldName+'/labels'
