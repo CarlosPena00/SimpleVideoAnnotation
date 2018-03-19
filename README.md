@@ -11,6 +11,32 @@
 You will need OpenCV with ffmpeg lib
 ```
 
+## Run with Docker 
+### Ubuntu Version: 16.04 / Python 2.7.12 / OpenCV 3.2.0
+
+ 0. You need to install [Docker](https://docs.docker.com/install/) and clone this [project](https://github.com/CarlosPena00/SimpleVideoAnnotation).
+ 
+ 1. Build docker image (It will take something like 20 minutes or more, depends of your network speed. Because It´s pulls Ubuntu image and install all dependencies, and build OpenCV). This command only need to run once.
+			
+		docker build . -t "videoAnnotation:core"
+ 
+ 2. You need to make the Display exportable
+
+		xhost +local:root
+
+ 3. Run and have fun!
+	
+		docker run -it --rm -e DISPLAY=${DISPLAY} -e QT_X11_NO_MITSHM=1 -v /tmp/.X11-unix:/tmp/.X11-unix videoannotation:core
+
+ 4. To pass data through container -> pc host
+
+ 		docker cp ContainerDockerNumber:/root/VideoAnnotation/ .
+
+ 5. To pass data through pc host -> container (Pass video file to container)
+
+ 		docker cp dataPathInHostPc ContainerDockerNumber:/root/VideoAnnotation/
+
+
 ## Usage example
 
 ```sh

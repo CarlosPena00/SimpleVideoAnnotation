@@ -1,9 +1,16 @@
 #!/usr/bin/env python2
 # -*- coding: utf-8 -*-
-
 import cv2
 import os
 import sys
+
+cv2v = cv2.__version__
+#cv2v = '2'
+if(cv2v[0] >= '3'):
+    flagCapturePosFrame = cv2.CAP_PROP_POS_FRAMES
+elif(cv2v[0] == '2'):
+    flagCapturePosFrame = cv2.cv.CV_CAP_PROP_POS_FRAMES
+
 
 if len(sys.argv) == 2:
     videoName = sys.argv[1]
@@ -117,9 +124,9 @@ while(cap.isOpened() and ret ):
         xCenter, yCenter = abs((startRect[0]+endRect[0])/2.0), abs((startRect[1]+endRect[1])/2.0)
         xVoc, yVoc = xCenter/width, yCenter/height
         
-        actual = cap.get(cv2.CAP_PROP_POS_FRAMES)
+        actual = cap.get(flagCapturePosFrame)
         skip = cv2.getTrackbarPos('SkipFrames','VideoTag')
-        cap.set(cv2.CAP_PROP_POS_FRAMES,actual+skip)
+        cap.set(flagCapturePosFrame,actual+skip)
         
         if frameWidth < 2 or frameHeight <2:
             ret, oriFrame = cap.read()  
@@ -142,7 +149,7 @@ while(cap.isOpened() and ret ):
         framePos += 1
 
 
-command = 'ls -d '+os.getcwd()+'/{}/JPEGImages/* > '.format(foldName)+os.getcwd()+'/{}/imgList.txt'.format(foldName)
+command = 'ls -d '+ os.getcwd() +'/{}/JPEGImages/* > '.format(foldName) + os.getcwd() + '/{}/imgList.txt'.format(foldName)
 os.system(command)
 
 cap.release()
