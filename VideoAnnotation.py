@@ -133,6 +133,20 @@ while(cap.isOpened() and ret ):
         if key == ord('2'):
             startRect[actual-1] = (startRect[actual-1][0], startRect[actual-1][1]+jump)
             endRect[actual-1] = (endRect[actual-1][0], endRect[actual-1][1]-jump)
+    if key == ord('z'):
+        skip = cv2.getTrackbarPos('SkipFrames','VideoTag')
+        actualPosFrame = cap.get(flagCapturePosFrame)
+        newFramePos = actualPosFrame-skip
+        if newFramePos < 0:
+            newFramePos = 0
+        
+        cap.set(flagCapturePosFrame, newFramePos)
+        ret, oriFrame = cap.read() 
+        
+        framePos -= 1
+        if framePos < 0:
+            framePos = 0            
+        
     if key == (32):
         vocLabel = []
         for values in range(0,len(startRect)):

@@ -51,6 +51,7 @@ python VideoAnnotation.py video.mp4
 * WASD - Move the BoundBox
 * 8456 - Change width and height
 * Space - Next frame
+* Z - Previous frame
 
 ## Variables -- Trackbar
 
