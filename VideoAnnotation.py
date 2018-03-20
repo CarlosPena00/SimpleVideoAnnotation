@@ -38,6 +38,7 @@ if not os.path.exists(foldGT):
 drawRect = False
 startRect = []
 endRect = []
+iClass = []
 key = -1
 color = [(255,0,0),(0,255,0),(0,0,255),(255,255,0),(255,0,255),(0,255,255),(0,0,0),(255,255,255)]
 actual = 0
@@ -56,6 +57,7 @@ def draw(event,x,y,flags,param):
         drawRect = True
         startRect.append((x, y))
         endRect.append((x, y))
+        iClass.append(cv2.getTrackbarPos('ID','VideoTag'))
         actual += 1
     elif event == cv2.EVENT_LBUTTONUP:
         drawRect = False
@@ -63,15 +65,16 @@ def draw(event,x,y,flags,param):
         if drawRect:
             endRect[actual-1] = (x, y)
             frame = oriFrame.copy()
-            iClass = cv2.getTrackbarPos('ID','VideoTag')
             for values in range(0,len(startRect)):
-                cv2.rectangle(frame, startRect[values], endRect[values], color[iClass])
+                cv2.rectangle(frame, startRect[values], endRect[values], color[iClass[values]])
     elif event == cv2.EVENT_RBUTTONDOWN:
         frame = oriFrame.copy()
         if len(startRect) > 0:
             startRect.pop()
         if len(endRect) > 0:
             endRect.pop()
+        if len(iClass) > 0:
+            iClass.pop()
         if actual > 0:
             actual -= 1
 
@@ -96,11 +99,9 @@ height, width, _ = frame.shape
 while(cap.isOpened() and ret ):
 
     frame = oriFrame.copy()
-    iClass = cv2.getTrackbarPos('ID','VideoTag')
     jump = cv2.getTrackbarPos('Jump','VideoTag')
-    
     for values in range(0,len(startRect)):
-        cv2.rectangle(frame, startRect[values], endRect[values], color[iClass],2)
+        cv2.rectangle(frame, startRect[values], endRect[values], color[iClass[values]],2)
 
     cv2.imshow("VideoTag", frame)
 
@@ -164,8 +165,7 @@ while(cap.isOpened() and ret ):
         
             widthVoc = float(frameWidth)/width
             heightVoc = float(frameHeight)/height
-            iClass = cv2.getTrackbarPos('ID','VideoTag')
-            vocClass = (iClass, xVoc,yVoc,  widthVoc, heightVoc, '\n')
+            vocClass = (iClass[values], xVoc,yVoc,  widthVoc, heightVoc, '\n')
             vocLabel.append(' '.join(str(e) + '' for e in vocClass))
             fileName = "/{:06d}.jpg".format(framePos)
             cv2.imwrite(foldGT+fileName, frame)
