@@ -40,7 +40,10 @@ startRect = []
 endRect = []
 iClass = []
 key = -1
-color = [(255,0,0),(0,255,0),(0,0,255),(255,255,0),(255,0,255),(0,255,255),(0,0,0),(255,255,255)]
+color = [(255,0,0),(0,255,0),(0,0,255),(255,255,0),(255,0,255),(0,255,255),(0, 51, 102), (102, 51, 0),(0,0,0),(255,255,255)]
+secColor = [(int(i * 0.8), int(j * 0.8), int(k * 0.8)) for (i,j,k) in color]
+color.extend(secColor)
+shiftColor = 10
 actual = 0
 
 def draw(event,x,y,flags,param):
@@ -65,8 +68,8 @@ def draw(event,x,y,flags,param):
         if drawRect:
             endRect[actual-1] = (x, y)
             frame = oriFrame.copy()
-            for values in range(0,len(startRect)):
-                cv2.rectangle(frame, startRect[values], endRect[values], color[iClass[values]])
+            #for values in range(0,len(startRect)):
+                #cv2.rectangle(frame, startRect[values], endRect[values], color[iClass[values]])
     elif event == cv2.EVENT_RBUTTONDOWN:
         frame = oriFrame.copy()
         if len(startRect) > 0:
@@ -83,7 +86,7 @@ def nothing(x):
 
 cv2.namedWindow("VideoTag")
 cv2.setMouseCallback("VideoTag", draw)
-cv2.createTrackbar("ID", "VideoTag",0, 7, nothing)
+cv2.createTrackbar("ID", "VideoTag",0, 10, nothing)
 cv2.createTrackbar("Jump", "VideoTag",1, 10, nothing)
 cv2.createTrackbar("SkipFrames", "VideoTag",1, 300, nothing)
 
