@@ -41,11 +41,11 @@ endRect = []
 iClass = []
 key = -1
 color = [(255,0,0),(0,255,0),(0,0,255),(255,255,0),(255,0,255),(0,255,255),(0, 51, 102), (102, 51, 0),(0,0,0),(255,255,255)]
-secColor = [(int(i * 0.8), int(j * 0.8), int(k * 0.8)) for (i,j,k) in color]
+secColor = [(int(i * 0.7), int(j * 0.7), int(k * 0.7)) for (i,j,k) in color]
 color.extend(secColor)
 shiftColor = 10
 actual = 0
-
+lenBbox = 0
 def draw(event,x,y,flags,param):
     global drawRect
     global startRect
@@ -55,21 +55,23 @@ def draw(event,x,y,flags,param):
     global key
     global color
     global actual
+    global lenBbox
     
     if event == cv2.EVENT_LBUTTONDOWN:
         drawRect = True
         startRect.append((x, y))
         endRect.append((x, y))
         iClass.append(cv2.getTrackbarPos('ID','VideoTag'))
-        actual += 1
+        lenBbox = len(startRect)
+        actual = lenBbox
+
     elif event == cv2.EVENT_LBUTTONUP:
         drawRect = False
     elif event == cv2.EVENT_MOUSEMOVE:
         if drawRect:
             endRect[actual-1] = (x, y)
             frame = oriFrame.copy()
-            #for values in range(0,len(startRect)):
-                #cv2.rectangle(frame, startRect[values], endRect[values], color[iClass[values]])
+            
     elif event == cv2.EVENT_RBUTTONDOWN:
         frame = oriFrame.copy()
         if len(startRect) > 0:
@@ -86,7 +88,7 @@ def nothing(x):
 
 cv2.namedWindow("VideoTag")
 cv2.setMouseCallback("VideoTag", draw)
-cv2.createTrackbar("ID", "VideoTag",0, 10, nothing)
+cv2.createTrackbar("ID", "VideoTag",0, 9, nothing)
 cv2.createTrackbar("Jump", "VideoTag",1, 10, nothing)
 cv2.createTrackbar("SkipFrames", "VideoTag",1, 300, nothing)
 
@@ -98,21 +100,31 @@ ret, oriFrame = cap.read()
 
 frame = oriFrame.copy()
 height, width, _ = frame.shape
-
+oldId = 0
+actualId = 0
 while(cap.isOpened() and ret ):
 
     frame = oriFrame.copy()
     jump = cv2.getTrackbarPos('Jump','VideoTag')
-    for values in range(0,len(startRect)):
-        cv2.rectangle(frame, startRect[values], endRect[values], color[iClass[values]],2)
+    for values in range(0, len(startRect)):
+        if values == actual-1:
+            col = color[iClass[values]]
+            thick = 2
+        else:
+            col = color[iClass[values] + shiftColor]
+            thick = 3
+        cv2.rectangle(frame, startRect[values], endRect[values], col, thick)
 
     cv2.imshow("VideoTag", frame)
 
     key = (cv2.waitKey(1) & 0xFF)
-    
+    if key == 255:
+        continue
     if key == ord('q'):
         break
     if actual > 0 :
+        #actualId = cv2.getTrackbarPos('ID','VideoTag')
+        #iClass[actual-1] = cv2.getTrackbarPos('ID','VideoTag')
         if key == ord('w'):
             startRect[actual-1] = (startRect[actual-1][0], startRect[actual-1][1]-jump)
             endRect[actual-1] = (endRect[actual-1][0], endRect[actual-1][1]-jump)
@@ -137,6 +149,16 @@ while(cap.isOpened() and ret ):
         if key == ord('2'):
             startRect[actual-1] = (startRect[actual-1][0], startRect[actual-1][1]+jump)
             endRect[actual-1] = (endRect[actual-1][0], endRect[actual-1][1]-jump)
+        if key == ord('-'):
+            del startRect[actual-1]
+            del endRect[actual-1]
+            del iClass[actual-1]
+            actual -= 1
+            enBbox = len(startRect)
+            
+            
+    if key == ord('.'):
+        actual = ((actual )%(lenBbox))+1
     if key == ord('z'):
         skip = cv2.getTrackbarPos('SkipFrames','VideoTag')
         actualPosFrame = cap.get(flagCapturePosFrame)
@@ -181,6 +203,7 @@ while(cap.isOpened() and ret ):
 
         ret, oriFrame = cap.read()
         framePos += 1
+        oldId = actualId
     
 
 command = 'ls -d '+ os.getcwd() +'/{}/JPEGImages/* > '.format(foldName) + os.getcwd() + '/{}/imgList.txt'.format(foldName)
