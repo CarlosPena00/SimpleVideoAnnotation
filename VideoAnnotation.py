@@ -25,6 +25,7 @@ foldName = videoName.split('.')[0]
 foldLabel = foldName + '/labels'
 foldJpeg = foldName + '/JPEGImages'
 foldGT = foldName + '/Ground'
+foldAugment = foldName + '/Augment'
 
 if not os.path.exists(foldName):
     os.mkdir(foldName)
@@ -34,6 +35,8 @@ if not os.path.exists(foldJpeg):
     os.mkdir(foldJpeg)
 if not os.path.exists(foldGT):
     os.mkdir(foldGT)
+if not os.path.exists(foldAugment):
+    os.mkdir(foldAugment)
           
 drawRect = False
 startRect = []
@@ -83,6 +86,26 @@ def draw(event,x,y,flags,param):
         if actual > 0:
             actual -= 1
 
+def imview(src, bbox):
+    height, width, _ = src.shape
+    # ID, xcenter/widht, ycenter/height, srcwidth/width, srcheight/height
+    iClass, xYolo, yYolo, widthYolo, heightYolo = bbox
+    xCenter = int( xYolo * width )
+    yCenter = int( yYolo * height )
+    objWidth = int( widthYolo * width )
+    objHeight = int ( heightYolo * height )
+        
+    ul = (xCenter - objWidth/2, yCenter - objHeight/2)
+    br = (xCenter + objWidth/2, yCenter + objHeight/2)
+        
+    cv2.rectangle(src,ul, br, (0,255,0),3)
+    
+    cv2.imshow("src", src)
+    cv2.waitKey(10000)    
+    cv2.destroyAllWindows()
+    # bbox = (2, 0.79765625, 0.705208333333, 0.1015625 ,0.202083333333)
+    # src = cv2.imread('/home/kaka/Desktop/SimpleVideoAnnotation/atHome004/JPEGImages/000000.jpg')
+    
 def nothing(x):
     pass
 
@@ -123,8 +146,6 @@ while(cap.isOpened() and ret ):
     if key == ord('q'):
         break
     if actual > 0 :
-        #actualId = cv2.getTrackbarPos('ID','VideoTag')
-        #iClass[actual-1] = cv2.getTrackbarPos('ID','VideoTag')
         if key == ord('w'):
             startRect[actual-1] = (startRect[actual-1][0], startRect[actual-1][1]-jump)
             endRect[actual-1] = (endRect[actual-1][0], endRect[actual-1][1]-jump)
@@ -175,6 +196,8 @@ while(cap.isOpened() and ret ):
         
     if key == (32):
         vocLabel = []
+        flipLabel = []
+        rotLabel = []
         for values in range(0,len(startRect)):
             frameWidth, frameHeight = abs(startRect[values-1][0]-endRect[values-1][0]), abs(startRect[values-1][1]-endRect[values-1][1])
             xCenter, yCenter = abs((startRect[values-1][0]+endRect[values-1][0])/2.0), abs((startRect[values-1][1]+endRect[values-1][1])/2.0)
@@ -194,11 +217,34 @@ while(cap.isOpened() and ret ):
             vocLabel.append(' '.join(str(e) + '' for e in vocClass))
             fileName = "/{:06d}.jpg".format(framePos)
             cv2.imwrite(foldGT+fileName, frame)
-            fileName = "/{:06d}.jpg".format(framePos)
             cv2.imwrite(foldJpeg+fileName, oriFrame)
+            
+            ###
+            flipClass = (iClass[values], 1-xVoc,yVoc,  widthVoc, heightVoc, '\n')
+            flipLabel.append(' '.join(str(e) + '' for e in flipClass))
+            fileName = "/{:06d}_F.jpg".format(framePos)
+            flip = cv2.flip(frame, 1)
+            cv2.imwrite(foldAugment+fileName, flip)
+            ###
+            rotX = (height - yCenter)/height
+            rotY = xVoc
+            rotClass = (iClass[values], rotX, rotY, heightVoc, widthVoc, '\n')
+            rotLabel.append(' '.join(str(e) + '' for e in rotClass))
+            fileName = "/{:06d}_R.jpg".format(framePos)
+            rot = cv2.rotate(frame, 0)
+            cv2.imwrite(foldAugment+fileName, rot)
+            
 
         with open(foldLabel+"/{:06d}.txt".format(framePos), 'w') as f:
             for labels in vocLabel:
+                f.write(labels)
+        
+        with open(foldLabel+"/{:06d}_F.txt".format(framePos), 'w') as f:
+            for labels in flipLabel:
+                f.write(labels)
+                
+        with open(foldLabel+"/{:06d}_R.txt".format(framePos), 'w') as f:
+            for labels in rotLabel:
                 f.write(labels)
 
         ret, oriFrame = cap.read()
@@ -207,6 +253,8 @@ while(cap.isOpened() and ret ):
     
 
 command = 'ls -d '+ os.getcwd() +'/{}/JPEGImages/* > '.format(foldName) + os.getcwd() + '/{}/imgList.txt'.format(foldName)
+os.system(command)
+command = 'ls -d '+ os.getcwd() +'/{}/Augment/* >> '.format(foldName) + os.getcwd() + '/{}/imgList.txt'.format(foldName)
 os.system(command)
 
 cap.release()
