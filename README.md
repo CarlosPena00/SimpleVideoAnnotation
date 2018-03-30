@@ -93,8 +93,7 @@ Givem a video file, it will create:
 ### TODO
 	
 	1. Organize the code
-	2. Add suport for multi BoundBox in the same image
-	3. Make automatic BoundBox
+	2. Make automatic BoundBox
 
 ### Please Feel Free to Contact Us!
 
