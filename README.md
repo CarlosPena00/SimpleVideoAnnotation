@@ -2,7 +2,7 @@
 
 > A simple Video annotation made with python + opencv for detection in yolo format
 
-![](VideoTag.png)
+![](VideoTag.jpg)
 
 ## Installation
 

@@ -14,7 +14,7 @@ if len(sys.argv) == 2:
     videoName = sys.argv[1]
 else:
     print ("Example of usage: python VideoAnnotation.py video.mp4")
-    videoName = 'test.webm'
+    videoName = 'atHome005.webm'
     
     if os.path.exists(videoName):
         print ("Video path not provided, using default")
@@ -223,7 +223,7 @@ while(cap.isOpened() and ret ):
             flipClass = (iClass[values], 1-xVoc,yVoc,  widthVoc, heightVoc, '\n')
             flipLabel.append(' '.join(str(e) + '' for e in flipClass))
             fileName = "/{:06d}_F.jpg".format(framePos)
-            flip = cv2.flip(frame, 1)
+            flip = cv2.flip(oriFrame, 1)
             cv2.imwrite(foldAugment+fileName, flip)
             ###
             rotX = (height - yCenter)/height
@@ -231,7 +231,7 @@ while(cap.isOpened() and ret ):
             rotClass = (iClass[values], rotX, rotY, heightVoc, widthVoc, '\n')
             rotLabel.append(' '.join(str(e) + '' for e in rotClass))
             fileName = "/{:06d}_R.jpg".format(framePos)
-            rot = cv2.rotate(frame, 0)
+            rot = cv2.rotate(oriFrame, 0)
             cv2.imwrite(foldAugment+fileName, rot)
             
 
