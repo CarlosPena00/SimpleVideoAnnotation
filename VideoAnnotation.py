@@ -200,6 +200,7 @@ while(cap.isOpened() and ret ):
         vocLabel = []
         flipLabel = []
         rotLabel = []
+        save = False
         for values in range(0,len(startRect)):
             frameWidth, frameHeight = abs(startRect[values-1][0]-endRect[values-1][0]), abs(startRect[values-1][1]-endRect[values-1][1])
             xCenter, yCenter = abs((startRect[values-1][0]+endRect[values-1][0])/2.0), abs((startRect[values-1][1]+endRect[values-1][1])/2.0)
@@ -209,33 +210,39 @@ while(cap.isOpened() and ret ):
             skip = cv2.getTrackbarPos('SkipFrames','VideoTag')
             cap.set(flagCapturePosFrame,actualPosFrame+skip)
             
-            if frameWidth < 2 or frameHeight < 2:
-                ret, oriFrame = cap.read()  
+            if frameWidth < 4 or frameHeight < 4:
                 continue
-        
+            save = True
             widthVoc = float(frameWidth)/width
             heightVoc = float(frameHeight)/height
             vocClass = (iClass[values], xVoc,yVoc,  widthVoc, heightVoc, '\n')
             vocLabel.append(' '.join(str(e) + '' for e in vocClass))
-            fileName = "/{:06d}.jpg".format(framePos)
-            cv2.imwrite(foldGT+fileName, frame)
-            cv2.imwrite(foldJpeg+fileName, oriFrame)
-            
-            ###
+        
             flipClass = (iClass[values], 1-xVoc,yVoc,  widthVoc, heightVoc, '\n')
             flipLabel.append(' '.join(str(e) + '' for e in flipClass))
-            fileName = "/{:06d}_F.jpg".format(framePos)
-            flip = cv2.flip(oriFrame, 1)
-            cv2.imwrite(foldAugment+fileName, flip)
-            ###
+            
             rotX = (height - yCenter)/height
             rotY = xVoc
             rotClass = (iClass[values], rotX, rotY, heightVoc, widthVoc, '\n')
             rotLabel.append(' '.join(str(e) + '' for e in rotClass))
-            fileName = "/{:06d}_R.jpg".format(framePos)
-            rot = cv2.rotate(oriFrame, 0)
-            cv2.imwrite(foldAugment+fileName, rot)
-            
+        
+        if save == False:
+            ret, oriFrame = cap.read() 
+            continue
+        
+        fileName = "/{:06d}.jpg".format(framePos)
+        cv2.imwrite(foldGT+fileName, frame)
+        cv2.imwrite(foldJpeg+fileName, oriFrame)
+        
+        ###
+        fileName = "/{:06d}_F.jpg".format(framePos)
+        flip = cv2.flip(oriFrame, 1)
+        cv2.imwrite(foldAugment+fileName, flip)
+        ###
+        fileName = "/{:06d}_R.jpg".format(framePos)
+        rot = cv2.rotate(oriFrame, 0)
+        cv2.imwrite(foldAugment+fileName, rot)
+        
 
         with open(foldLabel+"/{:06d}.txt".format(framePos), 'w') as f:
             for labels in vocLabel:
