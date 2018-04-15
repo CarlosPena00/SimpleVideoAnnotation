@@ -14,7 +14,7 @@ if len(sys.argv) == 2:
     videoName = sys.argv[1]
 else:
     print ("Example of usage: python VideoAnnotation.py video.mp4")
-    videoName = 'atHome005.webm'
+    videoName = 'atHome008.webm'
     
     if os.path.exists(videoName):
         print ("Video path not provided, using default")
@@ -25,7 +25,7 @@ foldName = videoName.split('.')[0]
 foldLabel = foldName + '/labels'
 foldJpeg = foldName + '/JPEGImages'
 foldGT = foldName + '/Ground'
-foldAugment = foldName + '/Augment'
+foldAugment = foldJpeg
 
 if not os.path.exists(foldName):
     os.mkdir(foldName)
@@ -145,7 +145,8 @@ while(cap.isOpened() and ret ):
         continue
     if key == ord('q'):
         break
-    if actual > 0 :
+    
+    if actual <= len(startRect) and actual >=0 :
         if key == ord('w'):
             startRect[actual-1] = (startRect[actual-1][0], startRect[actual-1][1]-jump)
             endRect[actual-1] = (endRect[actual-1][0], endRect[actual-1][1]-jump)
@@ -167,14 +168,15 @@ while(cap.isOpened() and ret ):
         if key == ord('8'):
             startRect[actual-1] = (startRect[actual-1][0], startRect[actual-1][1]-jump)
             endRect[actual-1] = (endRect[actual-1][0], endRect[actual-1][1]+jump)
-        if key == ord('2'):
+        if key == ord('5'):
             startRect[actual-1] = (startRect[actual-1][0], startRect[actual-1][1]+jump)
             endRect[actual-1] = (endRect[actual-1][0], endRect[actual-1][1]-jump)
         if key == ord('-'):
             del startRect[actual-1]
             del endRect[actual-1]
             del iClass[actual-1]
-            actual -= 1
+
+            if(actual < 0): actual = 0
             enBbox = len(startRect)
             
             
@@ -253,9 +255,9 @@ while(cap.isOpened() and ret ):
     
 
 command = 'ls -d '+ os.getcwd() +'/{}/JPEGImages/* > '.format(foldName) + os.getcwd() + '/{}/imgList.txt'.format(foldName)
+print(command)
 os.system(command)
-command = 'ls -d '+ os.getcwd() +'/{}/Augment/* >> '.format(foldName) + os.getcwd() + '/{}/imgList.txt'.format(foldName)
-os.system(command)
+
 
 cap.release()
 cv2.destroyAllWindows()
