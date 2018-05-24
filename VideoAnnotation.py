@@ -49,6 +49,7 @@ color.extend(secColor)
 shiftColor = 10
 actual = 0
 lenBbox = 0
+
 def draw(event,x,y,flags,param):
     global drawRect
     global startRect
@@ -67,9 +68,14 @@ def draw(event,x,y,flags,param):
         iClass.append(cv2.getTrackbarPos('ID','VideoTag'))
         lenBbox = len(startRect)
         actual = lenBbox
-
+    
+    elif event == cv2.EVENT_MOUSEWHEEL:
+        if actual > 0: 
+            iClass[actual-1] = (iClass[actual-1] + 1 ) % NUM_OF_CLASS 
+           
     elif event == cv2.EVENT_LBUTTONUP:
         drawRect = False
+        
     elif event == cv2.EVENT_MOUSEMOVE:
         if drawRect:
             endRect[actual-1] = (x, y)
@@ -109,9 +115,11 @@ def imview(src, bbox):
 def nothing(x):
     pass
 
+NUM_OF_CLASS = (10-1)
+
 cv2.namedWindow("VideoTag")
 cv2.setMouseCallback("VideoTag", draw)
-cv2.createTrackbar("ID", "VideoTag",0, 9, nothing)
+cv2.createTrackbar("ID", "VideoTag",0, NUM_OF_CLASS, nothing)
 cv2.createTrackbar("Jump", "VideoTag",1, 10, nothing)
 cv2.createTrackbar("SkipFrames", "VideoTag",1, 300, nothing)
 
@@ -125,7 +133,8 @@ frame = oriFrame.copy()
 height, width, _ = frame.shape
 oldId = 0
 actualId = 0
-while(cap.isOpened() and ret ):
+
+while( cap.isOpened() and ret ):
 
     frame = oriFrame.copy()
     jump = cv2.getTrackbarPos('Jump','VideoTag')
@@ -144,9 +153,8 @@ while(cap.isOpened() and ret ):
     if key == 255:
         continue
     if key == ord('q'):
-        break
-    
-    if actual <= len(startRect) and actual >=0 :
+        break    
+    if actual <= len(startRect) and actual > 0 :
         if key == ord('w'):
             startRect[actual-1] = (startRect[actual-1][0], startRect[actual-1][1]-jump)
             endRect[actual-1] = (endRect[actual-1][0], endRect[actual-1][1]-jump)
@@ -171,6 +179,10 @@ while(cap.isOpened() and ret ):
         if key == ord('5'):
             startRect[actual-1] = (startRect[actual-1][0], startRect[actual-1][1]+jump)
             endRect[actual-1] = (endRect[actual-1][0], endRect[actual-1][1]-jump)
+        
+        if key == ord('+'):
+            iClass[actual-1] = (iClass[actual-1] + 1 ) % NUM_OF_CLASS 
+            
         if key == ord('-'):
             del startRect[actual-1]
             del endRect[actual-1]
