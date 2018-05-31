@@ -14,7 +14,7 @@ if len(sys.argv) == 2:
     videoName = sys.argv[1]
 else:
     print ("Example of usage: python VideoAnnotation.py video.mp4")
-    videoName = 'atHome008.webm'
+    videoName = 'atHome004.webm'
     
     if os.path.exists(videoName):
         print ("Video path not provided, using default")
@@ -112,12 +112,35 @@ def imview(src, bbox):
     # bbox = (2, 0.79765625, 0.705208333333, 0.1015625 ,0.202083333333)
     # src = cv2.imread('/home/kaka/Desktop/SimpleVideoAnnotation/atHome004/JPEGImages/000000.jpg')
     
+def VOCtoRect(vocLabel, imgW=1024, imgH=640):
+    """
+        vocLabel: 
+             Classe; 
+             absoluteX/imgWidth; absoluteY/imgHeight;
+             absoluteWidth/imgWidth; absoluteHeight/imgHeigh 
+    """
+    xMean = vocLabel[1] * imgW
+    yMean = vocLabel[2] * imgH
+    
+    deltaX = vocLabel[3] * imgW
+    deltaY = vocLabel[4] * imgH
+    
+    dX = deltaX/2
+    dY = deltaY/2
+    xMin = int(xMean - dX)
+    xMax = int(xMean + dX)
+    yMin = int(yMean - dY)
+    yMax = int(yMean + dY)
+    
+    return ([(xMin, yMin), (xMax, yMax)])
+
+
 def nothing(x):
     pass
 
 NUM_OF_CLASS = (10-1)
 
-cv2.namedWindow("VideoTag")
+cv2.namedWindow("VideoTag", cv2.WINDOW_NORMAL)
 cv2.setMouseCallback("VideoTag", draw)
 cv2.createTrackbar("ID", "VideoTag",0, NUM_OF_CLASS, nothing)
 cv2.createTrackbar("Jump", "VideoTag",1, 10, nothing)
@@ -206,8 +229,23 @@ while( cap.isOpened() and ret ):
         
         framePos -= 1
         if framePos < 0:
-            framePos = 0            
-        
+            framePos = 0   
+    
+    if key == ord('r'):
+        if (os.path.exists(foldLabel + '/000000.txt')):
+            startRect, endRect, iClass = [], [], []
+            actual = 0
+            
+            with open(foldLabel+"/{:06d}.txt".format(framePos), 'r') as f:
+                for line in f.readlines():
+                    voc = [float(i) for i in line.split()]
+                    rect = VOCtoRect(voc, width, height)
+                    iClass.append(int(voc[0]))
+                    startRect.append(rect[0])
+                    endRect.append(rect[1])
+                    lenBbox = len(startRect)
+                    actual = 1
+                    
     if key == (32):
         vocLabel = []
         flipLabel = []
