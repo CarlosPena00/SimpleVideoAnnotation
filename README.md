@@ -56,8 +56,10 @@ python VideoAnnotation.py video.mp4
 * 8456 - Change width and height
 * Space - Next frame
 * Z - Previous 
-* - - Delete the bound box
-* . - Change bound box
+* 79 - Change current bound box
+* '/' or '*' - Change current class
+* '-' - Delete the bound box
+* R - Get bound box from labels.txt
 
 ## Variables -- Trackbar
 
