@@ -14,7 +14,7 @@ if len(sys.argv) == 2:
     videoName = sys.argv[1]
 else:
     print ("Example of usage: python VideoAnnotation.py video.mp4")
-    videoName = 'RM1.mp4'
+    videoName = 'atHome008.webm'
     
     if os.path.exists(videoName):
         print ("Video path not provided, using default")
@@ -202,8 +202,10 @@ while( cap.isOpened() and ret ):
             startRect[actual-1] = (startRect[actual-1][0], startRect[actual-1][1]+jump)
             endRect[actual-1] = (endRect[actual-1][0], endRect[actual-1][1]-jump)
         
-        if key == ord('+'):
+        if key == ord('*'):
             iClass[actual-1] = (iClass[actual-1] + 1 ) % NUM_OF_CLASS 
+        if key == ord('/'):
+            iClass[actual-1] = (iClass[actual-1] - 1 ) % NUM_OF_CLASS 
             
         if key == ord('-'):
             del startRect[actual-1]
@@ -211,11 +213,17 @@ while( cap.isOpened() and ret ):
             del iClass[actual-1]
 
             if(actual < 0): actual = 0
-            enBbox = len(startRect)
+            lenBbox = len(startRect)
             
             
-    if key == ord('.'):
-        actual = ((actual )%(lenBbox))+1
+    if key == ord('9'):
+        actual = ((actual)%(lenBbox)) + 1
+
+    if key == ord('7'):
+        actual -= 1
+        if actual == 0:
+            actual = lenBbox
+        
     if key == ord('z'):
         skip = cv2.getTrackbarPos('SkipFrames','VideoTag')
         actualPosFrame = cap.get(flagCapturePosFrame)
