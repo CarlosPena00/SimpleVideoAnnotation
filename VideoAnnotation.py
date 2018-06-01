@@ -244,7 +244,8 @@ while( cap.isOpened() and ret ):
             actual = 0
             
             with open(foldLabel+"/{:06d}.txt".format(framePos), 'r') as f:
-                for line in f.readlines():
+                lines = f.readlines()
+                for line in sorted(lines, key=lambda t: t[2:]):
                     voc = [float(i) for i in line.split()]
                     rect = VOCtoRect(voc, width, height)
                     iClass.append(int(voc[0]))
