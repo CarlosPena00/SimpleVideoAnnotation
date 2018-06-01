@@ -14,7 +14,7 @@ if len(sys.argv) == 2:
     videoName = sys.argv[1]
 else:
     print ("Example of usage: python VideoAnnotation.py video.mp4")
-    videoName = 'atHome004.webm'
+    videoName = 'RM1.mp4'
     
     if os.path.exists(videoName):
         print ("Video path not provided, using default")
@@ -158,7 +158,6 @@ oldId = 0
 actualId = 0
 
 while( cap.isOpened() and ret ):
-
     frame = oriFrame.copy()
     jump = cv2.getTrackbarPos('Jump','VideoTag')
     for values in range(0, len(startRect)):
@@ -252,8 +251,8 @@ while( cap.isOpened() and ret ):
         rotLabel = []
         save = False
         for values in range(0,len(startRect)):
-            frameWidth, frameHeight = abs(startRect[values-1][0]-endRect[values-1][0]), abs(startRect[values-1][1]-endRect[values-1][1])
-            xCenter, yCenter = abs((startRect[values-1][0]+endRect[values-1][0])/2.0), abs((startRect[values-1][1]+endRect[values-1][1])/2.0)
+            frameWidth, frameHeight = abs(startRect[values][0]-endRect[values][0]), abs(startRect[values][1]-endRect[values][1])
+            xCenter, yCenter = abs((startRect[values][0]+endRect[values][0])/2.0), abs((startRect[values][1]+endRect[values][1])/2.0)
             xVoc, yVoc = xCenter/width, yCenter/height
             
             actualPosFrame = cap.get(flagCapturePosFrame)
@@ -312,7 +311,6 @@ while( cap.isOpened() and ret ):
     
 
 command = 'ls -d '+ os.getcwd() +'/{}/JPEGImages/* > '.format(foldName) + os.getcwd() + '/{}/imgList.txt'.format(foldName)
-print(command)
 os.system(command)
 
 
