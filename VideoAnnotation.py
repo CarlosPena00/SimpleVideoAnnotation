@@ -254,11 +254,7 @@ while( cap.isOpened() and ret ):
             frameWidth, frameHeight = abs(startRect[values][0]-endRect[values][0]), abs(startRect[values][1]-endRect[values][1])
             xCenter, yCenter = abs((startRect[values][0]+endRect[values][0])/2.0), abs((startRect[values][1]+endRect[values][1])/2.0)
             xVoc, yVoc = xCenter/width, yCenter/height
-            
-            actualPosFrame = cap.get(flagCapturePosFrame)
-            skip = cv2.getTrackbarPos('SkipFrames','VideoTag')
-            cap.set(flagCapturePosFrame,actualPosFrame+skip)
-            
+                        
             if frameWidth < 4 or frameHeight < 4:
                 continue
             save = True
@@ -305,6 +301,9 @@ while( cap.isOpened() and ret ):
             for labels in rotLabel:
                 f.write(labels)
 
+        actualPosFrame = cap.get(flagCapturePosFrame)
+        skip = cv2.getTrackbarPos('SkipFrames','VideoTag')
+        cap.set(flagCapturePosFrame,actualPosFrame+skip)
         ret, oriFrame = cap.read()
         framePos += 1
         oldId = actualId
