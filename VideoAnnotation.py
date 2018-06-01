@@ -239,11 +239,14 @@ while( cap.isOpened() and ret ):
             framePos = 0   
     
     if key == ord('r'):
-        if (os.path.exists(foldLabel + '/000000.txt')):
+        path_r = foldLabel+"/{:06d}.txt".format(framePos)
+        if (not os.path.exists(path_r)):
+            path_r = foldLabel + '/000000.txt'
+        if (os.path.exists(path_r)):
             startRect, endRect, iClass = [], [], []
             actual = 0
             
-            with open(foldLabel+"/{:06d}.txt".format(framePos), 'r') as f:
+            with open(path_r, 'r') as f:
                 lines = f.readlines()
                 for line in sorted(lines, key=lambda t: t[2:]):
                     voc = [float(i) for i in line.split()]
