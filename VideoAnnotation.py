@@ -206,6 +206,13 @@ while( cap.isOpened() and ret ):
             iClass[actual-1] = (iClass[actual-1] + 1 ) % NUM_OF_CLASS 
         if key == ord('/'):
             iClass[actual-1] = (iClass[actual-1] - 1 ) % NUM_OF_CLASS 
+        
+        if key == ord('c'):
+            startRect.append(startRect[-1])
+            endRect.append(endRect[-1])
+            iClass.append(iClass[-1])
+            lenBbox = len(startRect)
+            actual = lenBbox
             
         if key == ord('-'):
             del startRect[actual-1]
@@ -216,10 +223,10 @@ while( cap.isOpened() and ret ):
             lenBbox = len(startRect)
             
             
-    if key == ord('9'):
+    if key == ord('9') and lenBbox > 0:
         actual = ((actual)%(lenBbox)) + 1
 
-    if key == ord('7'):
+    if key == ord('7') and lenBbox > 0:
         actual -= 1
         if actual == 0:
             actual = lenBbox
