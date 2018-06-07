@@ -14,7 +14,7 @@ if len(sys.argv) == 2:
     videoName = sys.argv[1]
 else:
     print ("Example of usage: python VideoAnnotation.py video.mp4")
-    videoName = 'atHome008.webm'
+    videoName = 'RM4.mp4'
     
     if os.path.exists(videoName):
         print ("Video path not provided, using default")
@@ -49,6 +49,7 @@ color.extend(secColor)
 shiftColor = 10
 actual = 0
 lenBbox = 0
+lastFrameSkip = 0
 
 def draw(event,x,y,flags,param):
     global drawRect
@@ -166,7 +167,7 @@ while( cap.isOpened() and ret ):
             thick = 2
         else:
             col = color[iClass[values] + shiftColor]
-            thick = 3
+            thick = 2
         cv2.rectangle(frame, startRect[values], endRect[values], col, thick)
 
     cv2.imshow("VideoTag", frame)
@@ -291,7 +292,14 @@ while( cap.isOpened() and ret ):
             rotLabel.append(' '.join(str(e) + '' for e in rotClass))
         
         if save == False:
-            ret, oriFrame = cap.read() 
+            actualPosFrame = cap.get(flagCapturePosFrame)
+            skip = cv2.getTrackbarPos('SkipFrames','VideoTag')
+            if (actualPosFrame+skip > lastFrameSkip):
+                cap.set(flagCapturePosFrame,actualPosFrame+skip)
+                ret, oriFrame = cap.read() 
+                lastFrameSkip = actualPosFrame+skip
+            else:
+                ret = False;
             continue
         
         fileName = "/{:06d}.jpg".format(framePos)
@@ -322,8 +330,12 @@ while( cap.isOpened() and ret ):
 
         actualPosFrame = cap.get(flagCapturePosFrame)
         skip = cv2.getTrackbarPos('SkipFrames','VideoTag')
-        cap.set(flagCapturePosFrame,actualPosFrame+skip)
-        ret, oriFrame = cap.read()
+        if (actualPosFrame+skip > lastFrameSkip):
+            cap.set(flagCapturePosFrame,actualPosFrame+skip)
+            ret, oriFrame = cap.read() 
+            lastFrameSkip = actualPosFrame+skip
+        else:
+            ret = False;
         framePos += 1
         oldId = actualId
     
