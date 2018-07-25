@@ -58,14 +58,12 @@ class VideoAnnotation:
         self.lenBbox = 0
         self.lastFrameSkip = 0
 
-        self.NUM_OF_CLASS = (10-1)
+        self.num_of_classes = (10-1)
 
         self.ret = None
         self.oriFrame = None
 
     def draw(self,event,x,y,flags,param):
-        global frame
-        global oriFrame
         
         if event == cv2.EVENT_LBUTTONDOWN:
             self.drawRect = True
@@ -77,7 +75,7 @@ class VideoAnnotation:
         
         elif event == cv2.EVENT_MOUSEWHEEL:
             if self.actual > 0: 
-                self.iClass[self.actual-1] = (self.iClass[self.actual-1] + 1 ) % self.NUM_OF_CLASS 
+                self.iClass[self.actual-1] = (self.iClass[self.actual-1] + 1 ) % self.num_of_classes 
                
         elif event == cv2.EVENT_LBUTTONUP:
             self.drawRect = False
@@ -150,7 +148,7 @@ class VideoAnnotation:
 
         cv2.namedWindow("VideoTag", cv2.WINDOW_NORMAL)
         cv2.setMouseCallback("VideoTag", self.draw)
-        cv2.createTrackbar("ID", "VideoTag",0, self.NUM_OF_CLASS, self.nothing)
+        cv2.createTrackbar("ID", "VideoTag",0, self.num_of_classes, self.nothing)
         cv2.createTrackbar("Jump", "VideoTag",1, 10, self.nothing)
         cv2.createTrackbar("SkipFrames", "VideoTag",1, 300, self.nothing)
 
@@ -211,9 +209,9 @@ class VideoAnnotation:
                     self.endRect[self.actual-1] = (self.endRect[self.actual-1][0], self.endRect[self.actual-1][1]-jump)
                 
                 if self.key == ord('*'):
-                    self.iClass[self.actual-1] = (self.iClass[self.actual-1] + 1 ) % self.NUM_OF_CLASS 
+                    self.iClass[self.actual-1] = (self.iClass[self.actual-1] + 1 ) % self.num_of_classes 
                 if self.key == ord('/'):
-                    self.iClass[self.actual-1] = (self.iClass[self.actual-1] - 1 ) % self.NUM_OF_CLASS 
+                    self.iClass[self.actual-1] = (self.iClass[self.actual-1] - 1 ) % self.num_of_classes 
                 
                 if self.key == ord('c'):
                     self.startRect.append(self.startRect[-1])
@@ -246,17 +244,17 @@ class VideoAnnotation:
                 if newFramePos < 0:
                     newFramePos = 0
                 
-                cap.set(flagCapturePosFrame, newFramePos)
-                ret, oriFrame = cap.read() 
+                cap.set(self.flagCapturePosFrame, newFramePos)
+                self.ret, self.oriFrame = cap.read() 
                 
-                framePos -= 1
-                if framePos < 0:
-                    framePos = 0   
+                self.framePos -= 1
+                if self.framePos < 0:
+                    self.framePos = 0   
             
             if self.key == ord('r'):
-                path_r = folderLabel+"/{:06d}.txt".format(framePos)
+                path_r = self.folderLabel+"/{:06d}.txt".format(self.framePos)
                 if (not os.path.exists(path_r)):
-                    path_r = folderLabel + '/000000.txt'
+                    path_r = self.folderLabel + '/000000.txt'
                 if (os.path.exists(path_r)):
                     self.startRect, self.endRect, self.iClass = [], [], []
                     self.actual = 0
@@ -265,7 +263,7 @@ class VideoAnnotation:
                         lines = f.readlines()
                         for line in sorted(lines, key=lambda t: t[2:]):
                             voc = [float(i) for i in line.split()]
-                            rect = VOCtoRect(voc, width, height)
+                            rect = self.VOCtoRect(voc, width, height)
                             self.iClass.append(int(voc[0]))
                             self.startRect.append(rect[0])
                             self.endRect.append(rect[1])
