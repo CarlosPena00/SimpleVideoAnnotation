@@ -147,9 +147,6 @@ cv2.createTrackbar("ID", "VideoTag",0, NUM_OF_CLASS, nothing)
 cv2.createTrackbar("Jump", "VideoTag",1, 10, nothing)
 cv2.createTrackbar("SkipFrames", "VideoTag",1, 300, nothing)
 
-
-print(videoName)
-
 cap = cv2.VideoCapture(videoName)
 if not cap.isOpened():
     print ("Video not found or Opencv without ffmpeg")      
