@@ -153,6 +153,10 @@ if not cap.isOpened():
 framePos = 0
 ret, oriFrame = cap.read()     
 
+if not ret:
+    print("Error reading video")
+    exit()
+
 frame = oriFrame.copy()
 height, width, _ = frame.shape
 oldId = 0

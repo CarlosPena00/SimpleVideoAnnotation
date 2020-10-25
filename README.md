@@ -8,11 +8,17 @@
 
 > https://drive.google.com/drive/folders/1jdrNOeyFmMtlrg8QWdlXW5aZy4HRXJUz
 
-## Installation
+## Installation (Tested with python 3.6 and OpenCV 4.4)
 
 ```sh
-#TODO
 You will need OpenCV with ffmpeg lib
+
+conda create -n videoannotation python=3.6
+conda activate videoannotation
+conda install -c menpo opencv
+pip install --upgrade pip 
+pip install opencv-contrib-python
+
 ```
 
 ## Run with Docker 
